@@ -18,7 +18,11 @@ const connection = mysql.createConnection({
 const app = express();
 const port = Number(process.env.SERVER_PORT);
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN }));
+app.use(
+	cors({
+		origin: ["http://localhost:4173", "https://etschool-qx17.vercel.app"],
+	})
+);
 
 app.get("/", (req, res) => {
 	res.send("WebSocketサーバーが動作しています");

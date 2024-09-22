@@ -38,23 +38,6 @@ const EventsBoard = () => {
 			<div className="flex-container">
 				<main className="block">
 					<h1 className="page-title">Events</h1>
-					<div className="mb-5">
-						<p className="mb-2 text-xl">Filter</p>
-
-						<Select onValueChange={setSortBy}>
-							<SelectTrigger className="w-[180px]">
-								<SelectValue placeholder="None" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="id">None</SelectItem>
-								<SelectItem value="title">Title</SelectItem>
-								<SelectItem value="date">Date</SelectItem>
-								<SelectItem value="organizer">
-									Organizer
-								</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
 
 					<div className="block">
 						<CardList events={events} />
