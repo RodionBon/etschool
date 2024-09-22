@@ -1,2 +1,2 @@
 Base level
-https://etschool.vercel.app/events/1
+https://etschool.vercel.app/
