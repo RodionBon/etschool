@@ -26,7 +26,7 @@ const RegistrationForm = () => {
 		},
 	});
 	const onSubmit = (values: IEventRegistrationFields) => {
-		fetch(`http://localhost:3001/participants`, {
+		fetch(`https://etschool-3ap3.vercel.app/participants`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json;charset=utf-8",

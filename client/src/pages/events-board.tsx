@@ -11,12 +11,12 @@ const EventsBoard = () => {
 	const [pagesCount, setPagesCount] = useState<number>(0);
 
 	useEffect(() => {
-		fetch(`http://localhost:3001/events/${page}`)
+		fetch(`https://etschool-3ap3.vercel.app/events/${page}`)
 			.then((response) => response.json())
 			.then((data) => setEvents(data))
 			.catch((error) => console.error("Error fetching data:", error));
 
-		fetch(`http://localhost:3001/events/pagesCount`)
+		fetch(`https://etschool-3ap3.vercel.app/events/pagesCount`)
 			.then((response) => response.json())
 			.then((data) => setPagesCount(data[0]["COUNT"]))
 			.catch((error) => console.error("Error fetching data:", error));

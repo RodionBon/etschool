@@ -15,12 +15,12 @@ const EventParticipants = () => {
 	const [participants, setParticipants] = useState<IParticipant[]>([]);
 
 	useEffect(() => {
-		fetch(`http://localhost:3001/event/${eventId}`)
+		fetch(`https://etschool-3ap3.vercel.app/event/${eventId}`)
 			.then((response) => response.json())
 			.then((data) => setEventTitle(data[0].title))
 			.catch((error) => console.error("Error fetching data:", error));
 
-		fetch(`http://localhost:3001/participants/${eventId}`)
+		fetch(`https://etschool-3ap3.vercel.app/participants/${eventId}`)
 			.then((response) => response.json())
 			.then((data) =>
 				setParticipants(
