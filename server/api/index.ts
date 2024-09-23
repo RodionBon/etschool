@@ -94,3 +94,5 @@ app.post("/participants", async (req, res) => {
 app.listen(port, () => {
 	console.log(`サーバーがポート${port}で動作中です`);
 });
+
+export default app;
