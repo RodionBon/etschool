@@ -1,106 +1,94 @@
 import express from "express";
-import mysql from "mysql2";
 import cors from "cors";
 import dotenv from "dotenv";
+import { createClient } from "@supabase/supabase-js";
+
+dotenv.config();
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl as string, supabaseKey as string);
 
 const EVENTS_PER_PAGE = 12;
 
 dotenv.config();
 
-const connection = mysql.createConnection({
-	host: process.env.DB_HOST,
-	user: process.env.DB_USER,
-	database: process.env.DB_DATABASE,
-	password: process.env.DB_PASSWORD,
-	port: Number(process.env.DB_PORT),
-});
-
 const app = express();
 const port = Number(process.env.SERVER_PORT);
 app.use(express.json());
-app.use(
-	cors({
-		origin: ["http://localhost:4173", "https://etschool-qx17.vercel.app"],
-	})
-);
+// app.use();
 
 app.get("/", (req, res) => {
 	res.send("WebSocketサーバーが動作しています");
 });
 
-app.get("/events/pagesCount", (req, res) => {
-	connection.query(
-		"SELECT CEIL(COUNT(*)/?) as COUNT FROM et.event",
-		EVENTS_PER_PAGE,
-		(err, result) => {
-			if (!err) {
-				res.send(result);
-			} else {
-				res.send(err);
-			}
-		}
-	);
+app.get("/events/pagesCount", async (req, res) => {
+	const result = await supabase.from("event").select("*");
+	if (result.data) {
+		res.send({ count: Math.ceil(result.data.length / EVENTS_PER_PAGE) });
+	} else {
+		res.status(500).send(result.error);
+	}
 });
 
-app.get("/events/:page", (req, res) => {
-	connection.query(
-		"SELECT * FROM event LIMIT ? OFFSET ? ",
-		[EVENTS_PER_PAGE, Number(req.params.page) * EVENTS_PER_PAGE],
-		(err, result) => {
-			if (!err) {
-				res.send(result);
-			} else {
-				res.send(err);
-			}
-		}
-	);
+app.get("/events/:page", async (req, res) => {
+	const page = req.params.page;
+
+	const result = await supabase
+		.from("event")
+		.select("*")
+		.range(
+			Number(page) * EVENTS_PER_PAGE,
+			(Number(page) + 1) * EVENTS_PER_PAGE
+		);
+	if (result.data) {
+		res.send(result.data);
+	} else {
+		res.status(500).send(result.error);
+	}
 });
 
-app.get("/event/:id", (req, res) => {
-	connection.query(
-		"SELECT * FROM event WHERE id = (?)",
-		req.params.id,
-		(err, result) => {
-			if (!err) {
-				res.send(result);
-			} else {
-				res.send(err);
-			}
-		}
-	);
+app.get("/event/:id", async (req, res) => {
+	const id = req.params.id;
+
+	const result = await supabase.from("event").select("*").eq("id", id);
+	if (result.data) {
+		res.send(result.data);
+	} else {
+		res.status(500).send(result.error);
+	}
 });
 
-app.get("/participants/:eventId", (req, res) => {
-	connection.query(
-		"SELECT * FROM participant WHERE event_id = (?)",
-		req.params.eventId,
-		(err, result) => {
-			if (!err) {
-				res.send(result);
-			} else {
-				res.send(err);
-			}
-		}
-	);
+app.get("/participants/:eventId", async (req, res) => {
+	const eventId = req.params.eventId;
+
+	const result = await supabase
+		.from("participant")
+		.select("*")
+		.eq("event_id", eventId);
+	if (result.data) {
+		res.send(result.data);
+	} else {
+		res.status(500).send(result.error);
+	}
 });
 
-app.post("/participants", (req, res) => {
-	const query =
-		"INSERT INTO participant (full_name, email, date_of_birth, source, event_id) VALUES (?, ?, ?, ?, ?)";
-	const values = [
-		req.body.fullName,
-		req.body.email,
-		req.body.dateOfBirth,
-		req.body.source,
-		req.body.eventId,
-	];
-	connection.query(query, values, (err, result) => {
-		if (!err) {
-			res.send(result);
-		} else {
-			res.send(err);
-		}
-	});
+app.post("/participants", async (req, res) => {
+	const result = await supabase
+		.from("participant")
+		.insert({
+			full_name: req.body.fullName,
+			email: req.body.email,
+			date_of_birth: req.body.dateOfBirth,
+			source: req.body.source,
+			event_id: req.body.eventId,
+		})
+		.select();
+
+	if (result.data) {
+		res.send(result.data);
+	} else {
+		res.status(500).send(result.error);
+	}
 });
 
 app.listen(port, () => {
