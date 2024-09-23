@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 const port = Number(process.env.SERVER_PORT);
 app.use(express.json());
-// app.use();
+app.use(cors({ origin: "https://etschool.vercel.app" }));
 
 app.get("/", (req, res) => {
 	res.send("WebSocketサーバーが動作しています");
