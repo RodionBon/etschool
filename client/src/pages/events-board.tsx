@@ -18,7 +18,7 @@ const EventsBoard = () => {
 
 		fetch(`https://etschool-3ap3.vercel.app/events/pagesCount`)
 			.then((response) => response.json())
-			.then((data) => setPagesCount(data["COUNT"]))
+			.then((data) => setPagesCount(data["count"]))
 			.catch((error) => console.error("Error fetching data:", error));
 	}, []);
 
